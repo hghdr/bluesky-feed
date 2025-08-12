@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bluesky Feed (Notion Embed)</title>
+  <style>
+    :root{
+      --bg:#fff; --fg:#111; --muted:#666; --card:#fafafa; --link:#0b57d0; --border:#e5e7eb;
+    }
+    [data-theme="dark"]{
+      --bg:#0b0b0b; --fg:#eaeaea; --muted:#a2a2a2; --card:#151515; --link:#8ab4f8; --border:#262626;
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;}
+    .wrap{max-width:720px;margin:0 auto;padding:16px;}
+    .head{display:flex;gap:12px;align-items:center;margin-bottom:12px;}
+    .head .title{font-weight:700;font-size:16px;}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0;}
+    .row{display:flex;gap:10px}
+    .avatar{width:40px;height:40px;border-radius:50%;flex:0 0 auto;border:1px solid var(--border);background:#ddd}
+    .meta{font-size:12px;color:var(--muted)}
+    .displayName{font-weight:600;color:var(--fg)}
+    .handle{color:var(--muted)}
+    .text{white-space:pre-wrap;word-wrap:break-word;margin:6px 0 8px}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .imgs{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}
+    .imgs img{width:100%;height:auto;border-radius:10px;border:1px solid var(--border)}
+    .ext{display:flex;gap:10px;border:1px solid var(--border);border-radius:10px;padding:10px;margin-top:6px;background:transparent}
+    .ext img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+    .reason{font-size:12px;color:var(--muted);margin-bottom:4px}
+    .footer{margin-top:6px;color:var(--muted);font-size:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .spinner{width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--link);border-radius:50%;animation:spin 1s linear infinite;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .err{color:#d32f2f;background:#fdecea;border:1px solid #f5c6c6;padding:10px;border-radius:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app">
+    <div id="feed"></div>
+  </div>
+
+<script>
+(async () => {
+  // ---- settings from URL ----
+  const params = new URLSearchParams(location.search);
+  const actor = params.get('actor') || 'bsky.app'; // ← 自分のハンドルに変えてデプロイしておくと楽
+  const limit = Math.min(parseInt(params.get('limit') || '20', 10), 100);
+  const theme = (params.get('theme') || '').toLowerCase() === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+
+  const app = document.getElementById('app');
+  const feedEl = document.getElementById('feed');
+  const spin = document.getElementById('spin');
+  const controls = document.getElementById('controls');
+  controls.innerHTML = `
+    actor=<b>${escapeHtml(actor)}</b> · limit=${limit} · theme=${theme}
+  `;
+
+  const endpoint = `https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${encodeURIComponent(actor)}&limit=${limit}`;
+
+  try {
+    const res = await fetch(endpoint, { headers: { 'accept': 'application/json' }});
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    spin.style.display = 'none';
+
+    if (!data.feed || !data.feed.length) {
+      feedEl.innerHTML = `<div class="err">投稿が見つかりませんでした。</div>`;
+      return;
+    }
+
+    for (const item of data.feed) {
+      const post = item.post || {};
+      const author = post.author || {};
+      const rec = post.record || {};
+      const reason = item.reason && item.reason.$type ? (item.reason.$type.includes('repost') ? 'Repost' : '') : '';
+      const href = `https://bsky.app/profile/${encodeURIComponent(author.did || author.handle)}/post/${post.uri?.split('/').pop() || ''}`;
+
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      card.innerHTML = `
+        ${reason ? `<div class="reason">↻ ${reason}</div>` : ``}
+        <div class="row">
+          <img class="avatar" src="${escapeAttr(author.avatar || '')}" alt="" />
+          <div style="flex:1">
+            <div><span class="displayName">${escapeHtml(author.displayName || '')}</span>
+              <span class="handle">@${escapeHtml(author.handle || author.did || '')}</span></div>
+            <div class="text">${linkifyText( rec.text || '', rec.facets )}</div>
+            ${renderImages(post.embed)}
+            ${renderExternal(post.embed)}
+            <div class="footer">
+              <a href="${href}" target="_blank" rel="noopener">Open in Bluesky</a>
+              <span>·</span>
+              <span title="${new Date(post.indexedAt).toISOString()}">${timeago(post.indexedAt)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+      feedEl.appendChild(card);
+    }
+  } catch (e) {
+    spin.style.display = 'none';
+    feedEl.innerHTML = `<div class="err">読み込みに失敗しました：${escapeHtml(String(e.message || e))}</div>`;
+  }
+
+  // ---- helpers ----
+  function timeago(dt){
+    const d = new Date(dt);
+    const diff = (Date.now() - d.getTime())/1000;
+    if (diff < 60) return `${Math.floor(diff)}秒前`;
+    if (diff < 3600) return `${Math.floor(diff/60)}分前`;
+    if (diff < 86400) return `${Math.floor(diff/3600)}時間前`;
+    if (diff < 86400*7) return `${Math.floor(diff/86400)}日前`;
+    return d.toLocaleString();
+  }
+  function renderImages(embed){
+    if (!embed) return '';
+    // app.bsky.embed.images
+    if (embed.$type === 'app.bsky.embed.images#view' && Array.isArray(embed.images) && embed.images.length){
+      const imgs = embed.images.map(im => `<img loading="lazy" src="${escapeAttr(im.thumb || im.fullsize || '')}" alt="">`).join('');
+      return `<div class="imgs">${imgs}</div>`;
+    }
+    // quoteの中の画像対応（簡易）
+    if (embed.$type === 'app.bsky.embed.recordWithMedia#view' && embed.media && embed.media.images){
+      const imgs = embed.media.images.map(im => `<img loading="lazy" src="${escapeAttr(im.thumb || im.fullsize || '')}" alt="">`).join('');
+      return `<div class="imgs">${imgs}</div>`;
+    }
+    return '';
+  }
+  function renderExternal(embed){
+    // app.bsky.embed.external
+    const ex = (embed && embed.$type === 'app.bsky.embed.external#view') ? embed.external :
+               (embed && embed.$type === 'app.bsky.embed.recordWithMedia#view' && embed.media?.$type === 'app.bsky.embed.external#view') ? embed.media.external : null;
+    if (!ex) return '';
+    const thumb = ex.thumb ? `<img loading="lazy" src="${escapeAttr(ex.thumb)}" alt="">` : '';
+    const title = ex.title ? `<div style="font-weight:600">${escapeHtml(ex.title)}</div>` : '';
+    const desc = ex.description ? `<div style="font-size:12px;color:var(--muted);">${escapeHtml(ex.description)}</div>` : '';
+    return `<a class="ext" href="${escapeAttr(ex.uri)}" target="_blank" rel="noopener">
+      ${thumb}
+      <div style="min-width:0">
+        ${title}
+        ${desc}
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">${escapeHtml(ex.uri)}</div>
+      </div>
+    </a>`;
+  }
+  function linkifyText(text, facets){
+    // 1) URLを雑にリンク化
+    let html = escapeHtml(text).replace(/\bhttps?:\/\/[^\s]+/g, u => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+    // 2) facets（リンク・メンション）もなるべく反映
+    if (Array.isArray(facets)){
+      for (const f of facets){
+        const link = f.features?.find(ft => ft.$type === 'app.bsky.richtext.facet#link');
+        const mention = f.features?.find(ft => ft.$type === 'app.bsky.richtext.facet#mention');
+        if (link && f.index){
+          try {
+            const start = f.index.byteStart, end = f.index.byteEnd;
+            const slice = text.slice(byteToChar(text, start), byteToChar(text, end));
+            html = html.replace(escapeReg(slice), `<a href="${escapeAttr(link.uri)}" target="_blank" rel="noopener">${escapeHtml(slice)}</a>`);
+          } catch {}
+        }
+        if (mention && f.index){
+          try {
+            const start = f.index.byteStart, end = f.index.byteEnd;
+            const slice = text.slice(byteToChar(text, start), byteToChar(text, end));
+            const prof = `https://bsky.app/profile/${encodeURIComponent(mention.did)}`;
+            html = html.replace(escapeReg(slice), `<a href="${prof}" target="_blank" rel="noopener">${escapeHtml(slice)}</a>`);
+          } catch {}
+        }
+      }
+    }
+    return html;
+  }
+  function byteToChar(str, byteIndex){
+    // UTF-8 byte index → JS文字index（ざっくり）
+    const enc = new TextEncoder();
+    const dec = new TextDecoder();
+    const bytes = enc.encode(str);
+    const sliced = bytes.slice(0, byteIndex);
+    return dec.decode(sliced).length;
+  }
+  function escapeHtml(s){ return (s??'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+  function escapeAttr(s){ return String(s??'').replace(/"/g,'&quot;'); }
+  function escapeReg(s){ return new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'); }
+})();
+</script>
+</body>
+</html>
