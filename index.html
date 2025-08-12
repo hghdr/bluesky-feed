@@ -1,214 +1,198 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="ja">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bluesky Feed (Notion Embed)</title>
+  <style>
+    :root{
+      --bg:#fff; --fg:#111; --muted:#666; --card:#fafafa; --link:#0b57d0; --border:#e5e7eb;
+    }
+    [data-theme="dark"]{
+      --bg:#0b0b0b; --fg:#eaeaea; --muted:#a2a2a2; --card:#151515; --link:#8ab4f8; --border:#262626;
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;}
+    .wrap{max-width:720px;margin:0 auto;padding:16px;}
+    .head{display:flex;gap:12px;align-items:center;margin-bottom:12px;}
+    .head .title{font-weight:700;font-size:16px;}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0;}
+    .row{display:flex;gap:10px}
+    .avatar{width:40px;height:40px;border-radius:50%;flex:0 0 auto;border:1px solid var(--border);background:#ddd}
+    .meta{font-size:12px;color:var(--muted)}
+    .displayName{font-weight:600;color:var(--fg)}
+    .handle{color:var(--muted)}
+    .text{white-space:pre-wrap;word-wrap:break-word;margin:6px 0 8px}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .imgs{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}
+    .imgs img{width:100%;height:auto;border-radius:10px;border:1px solid var(--border)}
+    .ext{display:flex;gap:10px;border:1px solid var(--border);border-radius:10px;padding:10px;margin-top:6px;background:transparent}
+    .ext img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+    .reason{font-size:12px;color:var(--muted);margin-bottom:4px}
+    .footer{margin-top:6px;color:var(--muted);font-size:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .spinner{width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--link);border-radius:50%;animation:spin 1s linear infinite;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .err{color:#d32f2f;background:#fdecea;border:1px solid #f5c6c6;padding:10px;border-radius:10px}
   </style>
 </head>
 <body>
-<p class="p1">&lt;!doctype html&gt;</p>
-<p class="p1">&lt;html lang="ja"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Bluesky Feed (Notion Embed)&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>:root{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--bg:#fff; --fg:#111; --muted:#666; --card:#fafafa; --link:#0b57d0; --border:#e5e7eb;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>[data-theme="dark"]{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--bg:#0b0b0b; --fg:#eaeaea; --muted:#a2a2a2; --card:#151515; --link:#8ab4f8; --border:#262626;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.wrap{max-width:720px;margin:0 auto;padding:16px;}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.head{display:flex;gap:12px;align-items:center;margin-bottom:12px;}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.head .title{font-weight:700;font-size:16px;}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.controls{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0;}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.row{display:flex;gap:10px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.avatar{width:40px;height:40px;border-radius:50%;flex:0 0 auto;border:1px solid var(--border);background:#ddd}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.meta{font-size:12px;color:var(--muted)}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.displayName{font-weight:600;color:var(--fg)}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.handle{color:var(--muted)}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.text{white-space:pre-wrap;word-wrap:break-word;margin:6px 0 8px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>a{color:var(--link);text-decoration:none}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>a:hover{text-decoration:underline}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.imgs{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.imgs img{width:100%;height:auto;border-radius:10px;border:1px solid var(--border)}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.ext{display:flex;gap:10px;border:1px solid var(--border);border-radius:10px;padding:10px;margin-top:6px;background:transparent}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.ext img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.reason{font-size:12px;color:var(--muted);margin-bottom:4px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.footer{margin-top:6px;color:var(--muted);font-size:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.spinner{width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--link);border-radius:50%;animation:spin 1s linear infinite;margin-right:6px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>@keyframes spin{to{transform:rotate(360deg)}}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.err{color:#d32f2f;background:#fdecea;border:1px solid #f5c6c6;padding:10px;border-radius:10px}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="wrap" id="app"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="head"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="spinner" id="spin"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="title"&gt;Bluesky Feed&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="controls" id="controls"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="feed"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">(async () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---- settings from URL ----</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const params = new URLSearchParams(location.search);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const actor = params.get('actor') || 'hghdr.bsky.social'; // ← 自分のハンドルに変えてデプロイしておくと楽</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const limit = Math.min(parseInt(params.get('limit') || '20', 10), 100);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const theme = (params.get('theme') || '').toLowerCase() === 'dark' ? 'dark' : 'light';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.documentElement.setAttribute('data-theme', theme);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const app = document.getElementById('app');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const feedEl = document.getElementById('feed');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const spin = document.getElementById('spin');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const controls = document.getElementById('controls');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>controls.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">    </span>actor=&lt;b&gt;${escapeHtml(actor)}&lt;/b&gt; · limit=${limit} · theme=${theme}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const endpoint = `https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${encodeURIComponent(actor)}&amp;limit=${limit}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const res = await fetch(endpoint, { headers: { 'accept': 'application/json' }});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!res.ok) throw new Error(`HTTP ${res.status}`);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const data = await res.json();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>spin.style.display = 'none';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!data.feed || !data.feed.length) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>feedEl.innerHTML = `&lt;div class="err"&gt;投稿が見つかりませんでした。&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const item of data.feed) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const post = item.post || {};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const author = post.author || {};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const rec = post.record || {};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const reason = item.reason &amp;&amp; item.reason.$type ? (item.reason.$type.includes('repost') ? 'Repost' : '') : '';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const href = `https://bsky.app/profile/${encodeURIComponent(author.did || author.handle)}/post/${post.uri?.split('/').pop() || ''}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const card = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>card.className = 'card';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>card.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">        </span>${reason ? `&lt;div class="reason"&gt;↻ ${reason}&lt;/div&gt;` : ``}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;img class="avatar" src="${escapeAttr(author.avatar || '')}" alt="" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style="flex:1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div&gt;&lt;span class="displayName"&gt;${escapeHtml(author.displayName || '')}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;span class="handle"&gt;@${escapeHtml(author.handle || author.did || '')}&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text"&gt;${linkifyText( rec.text || '', rec.facets )}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>${renderImages(post.embed)}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>${renderExternal(post.embed)}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="footer"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;a href="${href}" target="_blank" rel="noopener"&gt;Open in Bluesky&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;span&gt;·&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;span title="${new Date(post.indexedAt).toISOString()}"&gt;${timeago(post.indexedAt)}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>feedEl.appendChild(card);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} catch (e) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>spin.style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>feedEl.innerHTML = `&lt;div class="err"&gt;読み込みに失敗しました：${escapeHtml(String(e.message || e))}&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// ---- helpers ----</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function timeago(dt){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const d = new Date(dt);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const diff = (Date.now() - d.getTime())/1000;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (diff &lt; 60) return `${Math.floor(diff)}秒前`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (diff &lt; 3600) return `${Math.floor(diff/60)}分前`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (diff &lt; 86400) return `${Math.floor(diff/3600)}時間前`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (diff &lt; 86400*7) return `${Math.floor(diff/86400)}日前`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return d.toLocaleString();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function renderImages(embed){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!embed) return '';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// app.bsky.embed.images</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (embed.$type === 'app.bsky.embed.images#view' &amp;&amp; Array.isArray(embed.images) &amp;&amp; embed.images.length){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const imgs = embed.images.map(im =&gt; `&lt;img loading="lazy" src="${escapeAttr(im.thumb || im.fullsize || '')}" alt=""&gt;`).join('');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return `&lt;div class="imgs"&gt;${imgs}&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// quoteの中の画像対応（簡易）</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (embed.$type === 'app.bsky.embed.recordWithMedia#view' &amp;&amp; embed.media &amp;&amp; embed.media.images){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const imgs = embed.media.images.map(im =&gt; `&lt;img loading="lazy" src="${escapeAttr(im.thumb || im.fullsize || '')}" alt=""&gt;`).join('');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return `&lt;div class="imgs"&gt;${imgs}&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return '';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function renderExternal(embed){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// app.bsky.embed.external</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ex = (embed &amp;&amp; embed.$type === 'app.bsky.embed.external#view') ? embed.external :</p>
-<p class="p1"><span class="Apple-converted-space">               </span>(embed &amp;&amp; embed.$type === 'app.bsky.embed.recordWithMedia#view' &amp;&amp; embed.media?.$type === 'app.bsky.embed.external#view') ? embed.media.external : null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!ex) return '';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const thumb = ex.thumb ? `&lt;img loading="lazy" src="${escapeAttr(ex.thumb)}" alt=""&gt;` : '';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const title = ex.title ? `&lt;div style="font-weight:600"&gt;${escapeHtml(ex.title)}&lt;/div&gt;` : '';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const desc = ex.description ? `&lt;div style="font-size:12px;color:var(--muted);"&gt;${escapeHtml(ex.description)}&lt;/div&gt;` : '';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return `&lt;a class="ext" href="${escapeAttr(ex.uri)}" target="_blank" rel="noopener"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>${thumb}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="min-width:0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>${title}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>${desc}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-size:12px;color:var(--muted);margin-top:4px;"&gt;${escapeHtml(ex.uri)}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/a&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function linkifyText(text, facets){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// 1) URLを雑にリンク化</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let html = escapeHtml(text).replace(/\bhttps?:\/\/[^\s]+/g, u =&gt; `&lt;a href="${u}" target="_blank" rel="noopener"&gt;${u}&lt;/a&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// 2) facets（リンク・メンション）もなるべく反映</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (Array.isArray(facets)){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (const f of facets){</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const link = f.features?.find(ft =&gt; ft.$type === 'app.bsky.richtext.facet#link');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const mention = f.features?.find(ft =&gt; ft.$type === 'app.bsky.richtext.facet#mention');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (link &amp;&amp; f.index){</p>
-<p class="p1"><span class="Apple-converted-space">          </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const start = f.index.byteStart, end = f.index.byteEnd;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const slice = text.slice(byteToChar(text, start), byteToChar(text, end));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>html = html.replace(escapeReg(slice), `&lt;a href="${escapeAttr(link.uri)}" target="_blank" rel="noopener"&gt;${escapeHtml(slice)}&lt;/a&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>} catch {}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (mention &amp;&amp; f.index){</p>
-<p class="p1"><span class="Apple-converted-space">          </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const start = f.index.byteStart, end = f.index.byteEnd;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const slice = text.slice(byteToChar(text, start), byteToChar(text, end));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const prof = `https://bsky.app/profile/${encodeURIComponent(mention.did)}`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>html = html.replace(escapeReg(slice), `&lt;a href="${prof}" target="_blank" rel="noopener"&gt;${escapeHtml(slice)}&lt;/a&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>} catch {}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return html;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function byteToChar(str, byteIndex){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// UTF-8 byte index → JS文字index（ざっくり）</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const enc = new TextEncoder();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const dec = new TextDecoder();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const bytes = enc.encode(str);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const sliced = bytes.slice(0, byteIndex);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return dec.decode(sliced).length;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function escapeHtml(s){ return (s??'').replace(/[&amp;&lt;&gt;"']/g, m=&gt;({ '&amp;':'&amp;amp;','&lt;':'&amp;lt;','&gt;':'&amp;gt;','"':'&amp;quot;',"'":'&amp;#39;' }[m])); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function escapeAttr(s){ return String(s??'').replace(/"/g,'&amp;quot;'); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>function escapeReg(s){ return new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&amp;'), 'g'); }</p>
-<p class="p1">})();</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <div class="wrap" id="app">
+    <div class="head">
+      <div class="spinner" id="spin"></div>
+      <div>
+        <div class="title">Bluesky Feed</div>
+        <div class="controls" id="controls"></div>
+      </div>
+    </div>
+    <div id="feed"></div>
+  </div>
+
+<script>
+(async () => {
+  // ---- settings from URL ----
+  const params = new URLSearchParams(location.search);
+  const actor = params.get('actor') || 'bsky.app'; // ← 自分のハンドルに変えてデプロイしておくと楽
+  const limit = Math.min(parseInt(params.get('limit') || '20', 10), 100);
+  const theme = (params.get('theme') || '').toLowerCase() === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+
+  const app = document.getElementById('app');
+  const feedEl = document.getElementById('feed');
+  const spin = document.getElementById('spin');
+  const controls = document.getElementById('controls');
+  controls.innerHTML = `
+    actor=<b>${escapeHtml(actor)}</b> · limit=${limit} · theme=${theme}
+  `;
+
+  const endpoint = `https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${encodeURIComponent(actor)}&limit=${limit}`;
+
+  try {
+    const res = await fetch(endpoint, { headers: { 'accept': 'application/json' }});
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    spin.style.display = 'none';
+
+    if (!data.feed || !data.feed.length) {
+      feedEl.innerHTML = `<div class="err">投稿が見つかりませんでした。</div>`;
+      return;
+    }
+
+    for (const item of data.feed) {
+      const post = item.post || {};
+      const author = post.author || {};
+      const rec = post.record || {};
+      const reason = item.reason && item.reason.$type ? (item.reason.$type.includes('repost') ? 'Repost' : '') : '';
+      const href = `https://bsky.app/profile/${encodeURIComponent(author.did || author.handle)}/post/${post.uri?.split('/').pop() || ''}`;
+
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      card.innerHTML = `
+        ${reason ? `<div class="reason">↻ ${reason}</div>` : ``}
+        <div class="row">
+          <img class="avatar" src="${escapeAttr(author.avatar || '')}" alt="" />
+          <div style="flex:1">
+            <div><span class="displayName">${escapeHtml(author.displayName || '')}</span>
+              <span class="handle">@${escapeHtml(author.handle || author.did || '')}</span></div>
+            <div class="text">${linkifyText( rec.text || '', rec.facets )}</div>
+            ${renderImages(post.embed)}
+            ${renderExternal(post.embed)}
+            <div class="footer">
+              <a href="${href}" target="_blank" rel="noopener">Open in Bluesky</a>
+              <span>·</span>
+              <span title="${new Date(post.indexedAt).toISOString()}">${timeago(post.indexedAt)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+      feedEl.appendChild(card);
+    }
+  } catch (e) {
+    spin.style.display = 'none';
+    feedEl.innerHTML = `<div class="err">読み込みに失敗しました：${escapeHtml(String(e.message || e))}</div>`;
+  }
+
+  // ---- helpers ----
+  function timeago(dt){
+    const d = new Date(dt);
+    const diff = (Date.now() - d.getTime())/1000;
+    if (diff < 60) return `${Math.floor(diff)}秒前`;
+    if (diff < 3600) return `${Math.floor(diff/60)}分前`;
+    if (diff < 86400) return `${Math.floor(diff/3600)}時間前`;
+    if (diff < 86400*7) return `${Math.floor(diff/86400)}日前`;
+    return d.toLocaleString();
+  }
+  function renderImages(embed){
+    if (!embed) return '';
+    // app.bsky.embed.images
+    if (embed.$type === 'app.bsky.embed.images#view' && Array.isArray(embed.images) && embed.images.length){
+      const imgs = embed.images.map(im => `<img loading="lazy" src="${escapeAttr(im.thumb || im.fullsize || '')}" alt="">`).join('');
+      return `<div class="imgs">${imgs}</div>`;
+    }
+    // quoteの中の画像対応（簡易）
+    if (embed.$type === 'app.bsky.embed.recordWithMedia#view' && embed.media && embed.media.images){
+      const imgs = embed.media.images.map(im => `<img loading="lazy" src="${escapeAttr(im.thumb || im.fullsize || '')}" alt="">`).join('');
+      return `<div class="imgs">${imgs}</div>`;
+    }
+    return '';
+  }
+  function renderExternal(embed){
+    // app.bsky.embed.external
+    const ex = (embed && embed.$type === 'app.bsky.embed.external#view') ? embed.external :
+               (embed && embed.$type === 'app.bsky.embed.recordWithMedia#view' && embed.media?.$type === 'app.bsky.embed.external#view') ? embed.media.external : null;
+    if (!ex) return '';
+    const thumb = ex.thumb ? `<img loading="lazy" src="${escapeAttr(ex.thumb)}" alt="">` : '';
+    const title = ex.title ? `<div style="font-weight:600">${escapeHtml(ex.title)}</div>` : '';
+    const desc = ex.description ? `<div style="font-size:12px;color:var(--muted);">${escapeHtml(ex.description)}</div>` : '';
+    return `<a class="ext" href="${escapeAttr(ex.uri)}" target="_blank" rel="noopener">
+      ${thumb}
+      <div style="min-width:0">
+        ${title}
+        ${desc}
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">${escapeHtml(ex.uri)}</div>
+      </div>
+    </a>`;
+  }
+  function linkifyText(text, facets){
+    // 1) URLを雑にリンク化
+    let html = escapeHtml(text).replace(/\bhttps?:\/\/[^\s]+/g, u => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+    // 2) facets（リンク・メンション）もなるべく反映
+    if (Array.isArray(facets)){
+      for (const f of facets){
+        const link = f.features?.find(ft => ft.$type === 'app.bsky.richtext.facet#link');
+        const mention = f.features?.find(ft => ft.$type === 'app.bsky.richtext.facet#mention');
+        if (link && f.index){
+          try {
+            const start = f.index.byteStart, end = f.index.byteEnd;
+            const slice = text.slice(byteToChar(text, start), byteToChar(text, end));
+            html = html.replace(escapeReg(slice), `<a href="${escapeAttr(link.uri)}" target="_blank" rel="noopener">${escapeHtml(slice)}</a>`);
+          } catch {}
+        }
+        if (mention && f.index){
+          try {
+            const start = f.index.byteStart, end = f.index.byteEnd;
+            const slice = text.slice(byteToChar(text, start), byteToChar(text, end));
+            const prof = `https://bsky.app/profile/${encodeURIComponent(mention.did)}`;
+            html = html.replace(escapeReg(slice), `<a href="${prof}" target="_blank" rel="noopener">${escapeHtml(slice)}</a>`);
+          } catch {}
+        }
+      }
+    }
+    return html;
+  }
+  function byteToChar(str, byteIndex){
+    // UTF-8 byte index → JS文字index（ざっくり）
+    const enc = new TextEncoder();
+    const dec = new TextDecoder();
+    const bytes = enc.encode(str);
+    const sliced = bytes.slice(0, byteIndex);
+    return dec.decode(sliced).length;
+  }
+  function escapeHtml(s){ return (s??'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+  function escapeAttr(s){ return String(s??'').replace(/"/g,'&quot;'); }
+  function escapeReg(s){ return new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'); }
+})();
+</script>
 </body>
 </html>
