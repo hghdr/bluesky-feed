@@ -12,39 +12,32 @@
       --bg:#0b0b0b; --fg:#eaeaea; --muted:#a2a2a2; --card:#151515; --link:#8ab4f8; --border:#262626;
     }
     html,body{
-      margin:0;padding:0;
-      background:var(--bg);color:var(--fg);
-      font:14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+      margin:0;padding:0;background:var(--bg);color:var(--fg);
+      font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Noto Sans JP",sans-serif;
     }
-    .wrap{
-      max-width:100%;
-      margin:0 auto;
-      padding:16px;
-      box-sizing:border-box;
-    }
-    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0;}
-    .row{display:flex;gap:10px}
-    .avatar{width:40px;height:40px;border-radius:50%;flex:0 0 auto;border:1px solid var(--border);background:#ddd}
-    .meta{font-size:12px;color:var(--muted)}
-    .displayName{font-weight:600;color:var(--fg)}
-    .handle{color:var(--muted)}
-    .text{white-space:pre-wrap;word-wrap:break-word;margin:6px 0 8px}
-    a{color:var(--link);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .imgs{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}
-    .imgs img{width:100%;height:auto;border-radius:10px;border:1px solid var(--border)}
-    .ext{display:flex;gap:10px;border:1px solid var(--border);border-radius:10px;padding:10px;margin-top:6px;background:transparent}
-    .ext img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
-    .reason{font-size:12px;color:var(--muted);margin-bottom:4px}
-    .footer{margin-top:6px;color:var(--muted);font-size:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-    .spinner{width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--link);border-radius:50%;animation:spin 1s linear infinite;margin-right:6px}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .err{color:#d32f2f;background:#fdecea;border:1px solid #f5c6c6;padding:10px;border-radius:10px}
+    .wrap{ max-width:100%; margin:0 auto; padding:16px; box-sizing:border-box; }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; margin:10px 0; }
+    .row{ display:flex; gap:10px }
+    .avatar{ width:40px;height:40px;border-radius:50%;flex:0 0 auto;border:1px solid var(--border);background:#ddd }
+    .displayName{ font-weight:600;color:var(--fg) }
+    .handle{ color:var(--muted) }
+    .text{ white-space:pre-wrap; word-wrap:break-word; margin:6px 0 8px }
+    a{ color:var(--link); text-decoration:none }
+    a:hover{ text-decoration:underline }
+    .imgs{ display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin-top:6px }
+    .imgs img{ width:100%; height:auto; border-radius:10px; border:1px solid var(--border) }
+    .ext{ display:flex; gap:10px; border:1px solid var(--border); border-radius:10px; padding:10px; margin-top:6px; background:transparent }
+    .ext img{ width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border) }
+    .reason{ font-size:12px;color:var(--muted);margin-bottom:4px }
+    .footer{ margin-top:6px;color:var(--muted);font-size:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap }
+    .spinner{ width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--link);border-radius:50%;animation:spin 1s linear infinite;margin-right:6px }
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+    .err{ color:#d32f2f;background:#fdecea;border:1px solid #f5c6c6;padding:10px;border-radius:10px }
   </style>
 </head>
 <body>
   <div class="wrap" id="app">
-    <!-- スピナーとコントロールは非表示で置いておく -->
+    <!-- JSが参照する要素は非表示で置いておく（完全削除するとエラーになるため） -->
     <div style="display:none">
       <div class="spinner" id="spin"></div>
       <div id="controls"></div>
@@ -54,6 +47,7 @@
 
 <script>
 (async () => {
+  // 設定
   const params = new URLSearchParams(location.search);
   const actor = params.get('actor') || 'bsky.app';
   const limit = Math.min(parseInt(params.get('limit') || '20', 10), 100);
@@ -63,9 +57,7 @@
   const feedEl = document.getElementById('feed');
   const spin = document.getElementById('spin');
   const controls = document.getElementById('controls');
-  if (controls) {
-    controls.innerHTML = `actor=<b>${actor}</b> · limit=${limit} · theme=${theme}`;
-  }
+  if (controls) controls.innerHTML = `actor=<b>${escapeHtml(actor)}</b> · limit=${limit} · theme=${theme}`;
 
   const endpoint = `https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${encodeURIComponent(actor)}&limit=${limit}`;
 
@@ -85,25 +77,28 @@
       const author = post.author || {};
       const rec = post.record || {};
       const reason = item.reason && item.reason.$type ? (item.reason.$type.includes('repost') ? 'Repost' : '') : '';
-      const href = `https://bsky.app/profile/${encodeURIComponent(author.did || author.handle)}/post/${post.uri?.split('/').pop() || ''}`;
+      const postId = (post.uri && post.uri.split('/').pop()) || '';
+      const profileId = encodeURIComponent(author.did || author.handle || '');
+      const href = `https://bsky.app/profile/${profileId}/post/${postId}`;
 
       const card = document.createElement('div');
       card.className = 'card';
-
       card.innerHTML = `
-        ${reason ? `<div class="reason">↻ ${reason}</div>` : ``}
+        ${reason ? `<div class="reason">↻ ${escapeHtml(reason)}</div>` : ``}
         <div class="row">
-          <img class="avatar" src="${escapeAttr(author.avatar || '')}" alt="" />
+          <img class="avatar" src="${escapeAttr(author.avatar || '')}" alt="">
           <div style="flex:1">
-            <div><span class="displayName">${escapeHtml(author.displayName || '')}</span>
-              <span class="handle">@${escapeHtml(author.handle || author.did || '')}</span></div>
-            <div class="text">${linkifyText( rec.text || '', rec.facets )}</div>
+            <div>
+              <span class="displayName">${escapeHtml(author.displayName || '')}</span>
+              <span class="handle">@${escapeHtml(author.handle || author.did || '')}</span>
+            </div>
+            <div class="text">${linkifyText(rec.text || '', rec.facets)}</div>
             ${renderImages(post.embed)}
             ${renderExternal(post.embed)}
             <div class="footer">
               <a href="${href}" target="_blank" rel="noopener">Open in Bluesky</a>
               <span>·</span>
-              <span title="${new Date(post.indexedAt).toISOString()}">${timeago(post.indexedAt)}</span>
+              <span title="${post.indexedAt ? new Date(post.indexedAt).toISOString() : ''}">${timeago(post.indexedAt)}</span>
             </div>
           </div>
         </div>
@@ -115,12 +110,89 @@
     feedEl.innerHTML = `<div class="err">読み込みに失敗しました：${escapeHtml(String(e.message || e))}</div>`;
   }
 
-  // 以下は元コードと同じヘルパー関数群（省略せずにそのまま）
-  function timeago(dt){ /* ... */ }
-  function renderImages(embed){ /* ... */ }
-  function renderExternal(embed){ /* ... */ }
-  function linkifyText(text, facets){ /* ... */ }
-  function byteToChar(str, byteIndex){ /* ... */ }
+  // ---- helpers ----
+  function timeago(dt){
+    if (!dt) return '';
+    const d = new Date(dt);
+    const diff = (Date.now() - d.getTime())/1000;
+    if (diff < 60) return `${Math.floor(diff)}秒前`;
+    if (diff < 3600) return `${Math.floor(diff/60)}分前`;
+    if (diff < 86400) return `${Math.floor(diff/3600)}時間前`;
+    if (diff < 86400*7) return `${Math.floor(diff/86400)}日前`;
+    return d.toLocaleString();
+  }
+
+  function renderImages(embed){
+    if (!embed) return '';
+    // images
+    if (embed.$type === 'app.bsky.embed.images#view' && Array.isArray(embed.images) && embed.images.length){
+      const imgs = embed.images.map(im => `<img loading="lazy" src="${escapeAttr(im.thumb || im.fullsize || '')}" alt="">`).join('');
+      return `<div class="imgs">${imgs}</div>`;
+    }
+    // recordWithMedia(images)
+    if (embed.$type === 'app.bsky.embed.recordWithMedia#view' && embed.media && embed.media.images){
+      const imgs = embed.media.images.map(im => `<img loading="lazy" src="${escapeAttr(im.thumb || im.fullsize || '')}" alt="">`).join('');
+      return `<div class="imgs">${imgs}</div>`;
+    }
+    return '';
+  }
+
+  function renderExternal(embed){
+    // external
+    const ex = (embed && embed.$type === 'app.bsky.embed.external#view') ? embed.external :
+               (embed && embed.$type === 'app.bsky.embed.recordWithMedia#view' && embed.media?.$type === 'app.bsky.embed.external#view') ? embed.media.external : null;
+    if (!ex) return '';
+    const thumb = ex.thumb ? `<img loading="lazy" src="${escapeAttr(ex.thumb)}" alt="">` : '';
+    const title = ex.title ? `<div style="font-weight:600">${escapeHtml(ex.title)}</div>` : '';
+    const desc = ex.description ? `<div style="font-size:12px;color:var(--muted);">${escapeHtml(ex.description)}</div>` : '';
+    const url = escapeAttr(ex.uri || '');
+    return `<a class="ext" href="${url}" target="_blank" rel="noopener">
+      ${thumb}
+      <div style="min-width:0">
+        ${title}
+        ${desc}
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">${url}</div>
+      </div>
+    </a>`;
+  }
+
+  function linkifyText(text, facets){
+    // 1) URLをざっくりリンク化
+    let html = escapeHtml(text).replace(/\bhttps?:\/\/[^\s]+/g, u => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+    // 2) facetsを反映（リンク/メンション）
+    if (Array.isArray(facets)){
+      for (const f of facets){
+        const link = f.features?.find(ft => ft.$type === 'app.bsky.richtext.facet#link');
+        const mention = f.features?.find(ft => ft.$type === 'app.bsky.richtext.facet#mention');
+        if (link && f.index){
+          try {
+            const start = f.index.byteStart, end = f.index.byteEnd;
+            const slice = text.slice(byteToChar(text, start), byteToChar(text, end));
+            html = html.replace(escapeReg(slice), `<a href="${escapeAttr(link.uri)}" target="_blank" rel="noopener">${escapeHtml(slice)}</a>`);
+          } catch {}
+        }
+        if (mention && f.index){
+          try {
+            const start = f.index.byteStart, end = f.index.byteEnd;
+            const slice = text.slice(byteToChar(text, start), byteToChar(text, end));
+            const prof = `https://bsky.app/profile/${encodeURIComponent(mention.did)}`;
+            html = html.replace(escapeReg(slice), `<a href="${prof}" target="_blank" rel="noopener">${escapeHtml(slice)}</a>`);
+          } catch {}
+        }
+      }
+    }
+    return html;
+  }
+
+  function byteToChar(str, byteIndex){
+    // UTF-8 byte index → JS文字index（簡易）
+    const enc = new TextEncoder();
+    const dec = new TextDecoder();
+    const bytes = enc.encode(str);
+    const sliced = bytes.slice(0, byteIndex);
+    return dec.decode(sliced).length;
+  }
+
   function escapeHtml(s){ return (s??'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
   function escapeAttr(s){ return String(s??'').replace(/"/g,'&quot;'); }
   function escapeReg(s){ return new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'); }
