@@ -73,6 +73,8 @@
     }
 
     for (const item of data.feed) {
+      if (item.reply) continue;
+      
       const post = item.post || {};
       const author = post.author || {};
       const rec = post.record || {};
